@@ -121,33 +121,24 @@ void printImageDetails(PGMImage* pgm, const char* filename)
 	char* ext = (char*)strrchr(filename, '.');
 
 	if (!ext)
-		printf("No extension found"
-			"in file %s",
-			filename);
+		printf("No extension found in file %s",filename);
 	else
-		printf("File format"
-			" : %s\n",
+		printf("File format : %s\n",
 			ext + 1);
 
-	printf("PGM File type : %s\n",
-		pgm->pgmType);
+	printf("PGM File type : %s\n",pgm->pgmType);
 
 	// Print type of PGM file, in ascii
 	// and binary format
 	if (!strcmp(pgm->pgmType, "P2"))
-		printf("PGM File Format:"
-			"ASCII\n");
-	else if (!strcmp(pgm->pgmType,
-					"P5"))
-		printf("PGM File Format:"
-			" Binary\n");
+		printf("PGM File Format: ASCII\n");
+	else if (!strcmp(pgm->pgmType,"P5"))
+		printf("PGM File Format: Binary\n");
 
-	printf("Width of img : %d px\n",
-		pgm->width);
-	printf("Height of img : %d px\n",
-		pgm->height);
-	printf("Max Gray value : %d\n",
-		pgm->maxValue);
+	printf("Width of img : %d px\n",pgm->width);
+	printf("Height of img : %d px\n",pgm->height);
+	printf("Max Gray value : %d\n",pgm->maxValue);
+    
 
 	// close file
 	fclose(pgmfile);
