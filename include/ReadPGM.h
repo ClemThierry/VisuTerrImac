@@ -5,10 +5,11 @@
 // image data
 typedef struct PGMImage {
 	char pgmType[3];
-	unsigned char** data; //convertir en tableau à double entrées (x,y --> coordonnées des points)
 	unsigned int width;
 	unsigned int height;
 	unsigned int maxValue;
+	unsigned char data**; //convertir en tableau à double entrées (x,y --> coordonnées des points)
+
 } PGMImage;
 
 void ignoreComments(FILE* fp);
