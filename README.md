@@ -1,7 +1,7 @@
 ## VisuTerrImac
 
 # A faire
-- Récupérer les infos de l’image → .pgm (la heightmap)
+
  - Mettre les informations par pixel dans un tableau int [ligne][colonne] (ou direct dans le quadtree) et récupérer la taille de l’image dans 2 variables
  -Pour la heightmap : la lire et s’en servir pour modifier les points du sol 3D créé
 - Créer la structure du QuadTree 
@@ -15,3 +15,5 @@
  - Level Of Detail ou LOD : déterminer la distance d’un nœud du quadtree vis à vis de la caméra. Puis vous choisirez une méthode permettant de déterminer si on dessine le nœud (les 2   triangles formés des 4 points extrêmes du nœud) ou si on descend sur les fils (si le nœud n’est pas une feuille bien sûr).
 
 # Fait
+
+- Récupérer les infos de l’image → .pgm (la heightmap)
