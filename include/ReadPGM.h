@@ -8,7 +8,7 @@ typedef struct PGMImage {
 	unsigned int width;
 	unsigned int height;
 	unsigned int maxValue;
-	unsigned char data**; //convertir en tableau à double entrées (x,y --> coordonnées des points)
+	unsigned char** data; //convertir en tableau à double entrées (x,y --> coordonnées des points)
 
 } PGMImage;
 
