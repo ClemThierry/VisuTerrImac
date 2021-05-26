@@ -8,8 +8,12 @@ SRC_DIR	= src
 OBJ_DIR	= obj
 
 
-SRC_FILES 	= $(shell find $(SRC_DIR)/ -type f -name '*.c')
-OBJ_FILES 	= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o, $(SRC_FILES))
+C_SRC_FILES 	= $(shell find $(SRC_DIR)/ -type f -name '*.c')
+CXX_SRC_FILES = $(shell find $(SRC_DIR)/ -type f -name '*.cpp')
+SRC_FILES = $(C_SRC_FILES) $(CXX_SRC_FILES)
+C_OBJ_FILES 	= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o, $(SRC_FILES))
+CXX_OBJ_FILES 	= $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o, $(SRC_FILES))
+OBJ_FILES = $(C_OBJ_FILES) $(CXX_OBJ_FILES)
 EXEC_BIN	= visu.out
 
 
@@ -19,8 +23,12 @@ visu : $(OBJ_FILES)
 	@mkdir -p $(BIN_DIR)/
 	$(CC) -o $(BIN_DIR)/$(EXEC_BIN) $(OBJ_FILES) $(LDFLAGS)
 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p "$(@D)"
+	$(CC) -c $< -o $@ $(CFLAGS) $(INC_DIR)
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p "$(@D)"
+	@mkdir -p "$(@D)"
 	$(CC) -c $< -o $@ $(CFLAGS) $(INC_DIR)
 
 clean :

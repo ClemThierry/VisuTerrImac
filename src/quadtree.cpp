@@ -53,100 +53,68 @@ bool collision(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]) {
         glm::vec2(topleft.x, bottomright.y)
     };
     
-    // calculer la collision enre deux polygones a 4 cotés
+    // on commence par tester les projection sur le rectangle
+    // (on projete sur p1)
+    glm::vec2 *p1 = rectangle;
+    glm::vec2 *p2 = frustum;
 
-    //travail sur le rectangle
-    for(int a=0 ; a<4 ; a++)
-    {
-        int b = (a+1)%4;                                            //modulo 4 car c'est une boucle (à la fin on fait de 3 à 0 et pas de 3 à 4)
+    for (int _k = 0; _k < 2; _k++) {
 
-        glm::vec2 ab = rectangle[b] - rectangle[a];
-        glm::vec2 normal = glm::vec2(-ab.y , ab.x);                 //normale à ab
+        // calculer la collision enre deux polygones a 4 cotés
 
-        //extrémités du projeté du rectangle
-        float min=INFINITY, max=-INFINITY;
-        for(int i=0 ; i<4 ; i++){
-            glm::vec2 v = rectangle[i] - rectangle[a];
-            float x = glm::dot(normal, v);
+        //travail sur le rectangle
+        for(int a=0 ; a<4 ; a++)
+        {
+            int b = (a+1)%4;                                            //modulo 4 car c'est une boucle (à la fin on fait de 3 à 0 et pas de 3 à 4)
 
-            if(min>x){
-                min = x;
+            glm::vec2 ab = p1[b] - p1[a];
+            glm::vec2 normal = glm::vec2(-ab.y , ab.x);                 //normale à ab
+
+            //extrémités du projeté du poly[p1]
+            float min=INFINITY, max=-INFINITY;
+            for(int i=0 ; i<4 ; i++){
+                glm::vec2 v = p1[i] - p1[a];
+                float x = glm::dot(normal, v);
+
+                if(min>x){
+                    min = x;
+                }
+                if(x>max){
+                    max = x;
+                }
             }
-            if(x>max){
-                max = x;
+
+            //extrémités du projeté du poly[p2]
+            float min2=INFINITY, max2=-INFINITY;
+            for(int i=0 ; i<4 ; i++){
+                glm::vec2 v = p2[i] - p1[a];
+                float x = glm::dot(normal, v);
+
+                if(min2>x){
+                    min2 = x;
+                }
+                if(x>max2){
+                    max2 = x;
+                }
+            }
+
+            //vérification pour savoir si les polygones se touchent
+            //si nos deux projetés ne se touchent pas, alors les deux figures ne se touchent pas
+            bool se_touchent = max2 >= min && max >= min2;
+
+            if(!se_touchent){
+                return false;
             }
         }
 
-        //extrémités du projeté du frustum
-        float min2=INFINITY, max2=-INFINITY;
-        for(int i=0 ; i<4 ; i++){
-            glm::vec2 v = frustum[i] - rectangle[a];
-            float x = glm::dot(normal, v);
-
-            if(min2>x){
-                min2 = x;
-            }
-            if(x>max2){
-                max2 = x;
-            }
-        }
-
-        //vérification pour savoir si les polygones se touchent
-        //si nos deux projetés ne se touchent pas, alors les deux figures ne se touchent pas
-        bool se_touchent = max2 >= min && max >= min2;
-
-        if(!se_touchent){
-            return False;
-        }
+        // on echange p1 et p2 pour faire le meme algo mais sur le frustum
+        // plutot que le rectangle
+        glm::vec2 *tmp = p1;
+        p1 = p2;
+        p2 = tmp;
     }
 
-    //travail sur le frustum
-    for(int a=0 ; a<4 ; a++)
-    {
-        int b = (a+1)%4;                                            //modulo 4 car c'est une boucle (à la fin on fait de 3 à 0 et pas de 3 à 4)
-
-        glm::vec2 ab = frustum[b] - frustum[a];                     // /!\ maintenant on est sur les points a et b du frustum
-        glm::vec2 normal = glm::vec2(-ab.y , ab.x);                 //normale à ab
-
-        //extrémités du projeté du rectangle
-        float min=INFINITY, max=-INFINITY;
-        for(int i=0 ; i<4 ; i++){
-            glm::vec2 v = rectangle[i] - frustum[a];
-            float x = glm::dot(normal, v);
-
-            if(min>x){
-                min = x;
-            }
-            if(x>max){
-                max = x;
-            }
-        }
-
-        //extrémités du projeté du frustum
-        float min2=INFINITY, max2=-INFINITY;
-        for(int i=0 ; i<4 ; i++){
-            glm::vec2 v = frustum[i] - frustum[a];
-            float x = glm::dot(normal, v);
-
-            if(min2>x){
-                min2 = x;
-            }
-            if(x>max2){
-                max2 = x;
-            }
-        }
-
-        //vérification pour savoir si les polygones se touchent
-        //si nos deux projetés ne se touchent pas, alors les deux figures ne se touchent pas
-        bool se_touchent = max2 >= min && max >= min2;
-
-        if(!se_touchent){
-            return False;
-        }
-    }
-
-    return True;
-
+    return true;
 }
 
 void Quad::build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4], int level){

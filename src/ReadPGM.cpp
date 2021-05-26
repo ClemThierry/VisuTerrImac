@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <"ReadPGM.h">
+#include <ReadPGM.h>
 // Function to ignore any comments
 // in file
 void ignoreComments(FILE *fp)

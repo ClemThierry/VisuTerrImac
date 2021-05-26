@@ -1,8 +1,6 @@
-#include <iostream>
-#include <cmath>
 #include <glm/glm.hpp>
-using namespace std;
 
+class HeightMap;
 
 // The objects that we want stored in the quadtree
 struct Node
