@@ -8,9 +8,15 @@
 
 #include "../include/main.h"
 #include "../include/gldrawing.h"
+#include "../include/skybox.h"
 
-float longitude = 40.;
-float latitude = 40.;
+#define STEP_ANGLE	M_PI/90.
+#define STEP_PROF	0.05
+
+GLuint texture;
+
+float latitude = 0.;
+float longitude = M_PI/2.;
 float angle = M_PI/2.;
 
 float posX = 0.;
@@ -19,9 +25,9 @@ float posZ = 0.;
 
 void display(){
 
-	Vect pVise = createVect(posX+cos(longitude)*sin(latitude),posY+sin(longitude)*sin(latitude),posZ+cos(latitude));
-	Vect vise = createVect(cos(longitude)*sin(latitude),sin(longitude)*sin(latitude),cos(latitude));
-	Vect vectL = createVect(cos(longitude + angle),sin(longitude + angle),0.);
+	Vect pVise = createVect(posX+cos(latitude)*sin(longitude),posY+sin(latitude)*sin(longitude),posZ+cos(longitude));
+	Vect vise = createVect(cos(latitude)*sin(longitude),sin(latitude)*sin(longitude),cos(longitude));
+	Vect vectL = createVect(cos(latitude + angle),sin(latitude + angle),0.);
 	Vect vectUp = prodVect(vise,vectL);
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -31,12 +37,17 @@ void display(){
 	glLoadIdentity();
 
 	glPushMatrix();
-    
-		gluLookAt(posX,posY,posZ,pVise.x,pVise.y,pVise.z,vectUp.x,vectUp.y,vectUp.z);
-		glColor3f(1.0,0.0,0.0);
-		glDrawRepere(5.0);
 
+		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHT0);
+		glDrawRepere(2.0);
+		glRotatef(-(latitude/M_PI)*180,0.,0.,1.);
+		glRotatef(-(longitude/M_PI)*180,1.,0.,0.);
+		glDepthMask(GL_FALSE);
+		drawSkyBox(texture);
+		glDepthMask(GL_TRUE);
+		gluLookAt(posX,posY,posZ,pVise.x,pVise.y,pVise.z,vectUp.x,vectUp.y,vectUp.z);
+		drawCube();
     
 	glPopMatrix();
 
@@ -50,17 +61,17 @@ static void kbdFunc(unsigned char c, int x, int y) {
 		case 27 :
 			exit(0);
 			break;
+		case 'S' : case 's' : 
+			longitude+= STEP_ANGLE;
+			break;
+		case 'Z' : case 'z' : 
+			longitude -= STEP_ANGLE;
+			break;
 		case 'D' : case 'd' : 
 			latitude -= STEP_ANGLE;
 			break;
-		case 'E' : case 'e' : 
+		case 'Q' : case 'q' : 
 			latitude += STEP_ANGLE;
-			break;
-		case 'F' : case 'f' : 
-			longitude -= STEP_ANGLE;
-			break;
-		case 'S' : case 's' : 
-			longitude += STEP_ANGLE;
 			break;
 		default:
 			printf("Appui sur la touche %c\n",c);
@@ -71,10 +82,10 @@ static void kbdFunc(unsigned char c, int x, int y) {
 static void kbdSpFunc(int c, int x, int y) {
 	switch(c) {
 		case GLUT_KEY_UP :
-			posY+=STEP_PROF;
+			posY-=STEP_PROF;
 			break;
 		case GLUT_KEY_DOWN :
-			posY-=STEP_PROF;
+			posY+=STEP_PROF;
 			break;
 		case GLUT_KEY_LEFT :
 			posX-=STEP_PROF;
@@ -96,11 +107,10 @@ static void kbdSpFunc(int c, int x, int y) {
 
 void init(){
     //select clearing (background) color
-    glClearColor(0.3,0.3,0.3,0.0);
+    glClearColor(0.3,0.3,0.3,1.0);
     //initialize viewing values 
-	glEnable(GL_DEPTH_TEST);
     glLoadIdentity();
-    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+    gluPerspective(60.,1.,0.01,10000.);
 }
 
 int main(int argc, char** argv)
@@ -122,6 +132,7 @@ int main(int argc, char** argv)
     
     //Call init (initialise GLUT
     init();
+	texture = genSkybox();
     
     //Call "display" function
     glutDisplayFunc(display);
