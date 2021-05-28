@@ -5,9 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ReadPGM.h>
+#include <errno.h>
+#include "../include/ReadPGM.h"
 // Function to ignore any comments
 // in file
+
 void ignoreComments(FILE *fp)
 {
 	int ch;
@@ -44,7 +46,8 @@ bool openPGM(PGMImage *pgm, const char *filename)
 	// then return
 	if (pgmfile == NULL)
 	{
-		printf("File does not exist\n");
+		printf("fopen failed, errno = %d\n", errno);
+		//printf("File does not exist\n");
 		return false;
 	}
 
@@ -61,8 +64,6 @@ bool openPGM(PGMImage *pgm, const char *filename)
 
 		ignoreComments(pgmfile);
 	}
-
-
 
 	// Read the image dimensions
 	if(fscanf(pgmfile, "%d %d",&(pgm->width),&(pgm->height)))
@@ -158,23 +159,5 @@ void printImageDetails(PGMImage *pgm, const char *filename)
 	fclose(pgmfile);
 }
 
-// Driver Code
-/*int main(int argc, char const *argv[])
-{
-	PGMImage *pgm = (PGMImage *)malloc(sizeof(PGMImage));
-	const char *ipfile;
 
-	if (argc == 2)
-		ipfile = argv[1];
-	else
-		ipfile = "image.pbm";
 
-	printf("\tip file : %s\n", ipfile);
-
-	// Process the image and print
-	// its details
-	if (openPGM(pgm, ipfile))
-		printImageDetails(pgm, ipfile);
-
-	return 0;
-}*/

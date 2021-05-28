@@ -63,6 +63,10 @@ static void kbdFunc(unsigned char c, int x, int y) {
 		case 27 :
 			exit(0);
 			break;
+		case 'F' : case 'f' : glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+			break;
+		case 'P' : case 'p' : glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+			break;
 		case 'S' : case 's' : 
 			longitude+= STEP_ANGLE;
 			break;

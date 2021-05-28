@@ -1,5 +1,5 @@
-#include "create_object.h"
-// #include "./include/ReadPGM"
+#include "../include/create_object.h"
+#include "../include/ReadPGM.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,22 +11,33 @@ unsigned int triangle_number;
 unsigned int* triangle_index;
 
 
-
 void createCoordinates() {
+    float hauteur[5][5];
+	PGMImage *pgm = (PGMImage *)malloc(sizeof(PGMImage));
+	const char *ipfile;
+	ipfile = "./maps/image.pbm";
+    if(openPGM(pgm, ipfile)){
+        //printf("data[0][0] = %i \n",pgm->data[0][0]);
+        for(int i=0; i< (int)pgm->height; i++){
+            for(int j=0; j< (int)pgm->height; j++){
+                hauteur[i][j]=(float)pgm->data[i][j]/100;
+            }
+        }
+    }
 	// Vous devez fixer :
 	// - le nombre de sommets (vertex_number)
 	// - le tableau des coordonnees des sommets (vertex_coord)
 	// - le tableau des coordonnees des normales (normal_coord)
 	// - le nombre de triangles (triangle_number)
 	// - le tableau des indices des sommets consistituant les triangles (triangle_index)
-	float hauteur[5][5]= {
+	/*float hauteur[5][5]= {
 		{0.1, 0.0, 0.2, 0.1, 0.0},
 		{0.2, 0.1, 0.2, 0.1, 0.0},
 		{0.1, 0.0, 0.2, 0.3, 0.0},
 		{0.0, 0.0, 0.2, 0.1, 0.1},
 		{0.1, 0.3, 0.2, 0.0, 0.0}
-	};
-	int nb_pt_per_side = 5;
+	};*/
+	int nb_pt_per_side = (int)pgm->height;
     int nb_div = nb_pt_per_side - 1;
     vertex_number = nb_pt_per_side*nb_pt_per_side;
     // 2 triange par carré 
