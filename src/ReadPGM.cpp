@@ -22,8 +22,11 @@ void ignoreComments(FILE *fp)
 	// start with a '#'
 	if (ch == '#')
 	{
-		fgets(line, sizeof(line), fp);
-		ignoreComments(fp);
+		if(fgets(line, sizeof(line), fp))
+		{
+			ignoreComments(fp);
+		}
+		
 	}
 	else
 		fseek(fp, -1, SEEK_CUR);
@@ -46,30 +49,34 @@ bool openPGM(PGMImage *pgm, const char *filename)
 	}
 
 	ignoreComments(pgmfile);
-	fscanf(pgmfile, "%s",
-		   pgm->pgmType);
-
-	// Check for correct PGM Binary
-	// file type
-	if (strcmp(pgm->pgmType, "P6"))
+	if(fscanf(pgmfile, "%s", pgm->pgmType))
 	{
-		fprintf(stderr,
-				"Wrong file type!\n");
-		exit(EXIT_FAILURE);
+		// Check for correct PGM Binary
+		// file type
+		if (strcmp(pgm->pgmType, "P6"))
+		{
+			fprintf(stderr,"Wrong file type!\n");
+			exit(EXIT_FAILURE);
+		}
+
+		ignoreComments(pgmfile);
 	}
 
-	ignoreComments(pgmfile);
+
 
 	// Read the image dimensions
-	fscanf(pgmfile, "%d %d",
-		   &(pgm->width),
-		   &(pgm->height));
+	if(fscanf(pgmfile, "%d %d",&(pgm->width),&(pgm->height)))
+	{
+		ignoreComments(pgmfile);
+	}
 
-	ignoreComments(pgmfile);
+	
 
 	// Read maximum gray value
-	fscanf(pgmfile, "%d", &(pgm->maxValue));
-	ignoreComments(pgmfile);
+	if(fscanf(pgmfile, "%d", &(pgm->maxValue))){
+		ignoreComments(pgmfile);
+	}
+	
 
 	// Allocating memory to store
 	// img info in defined struct
@@ -82,7 +89,7 @@ bool openPGM(PGMImage *pgm, const char *filename)
 
 		fgetc(pgmfile);
 
-		for (int i = 0; i < pgm->height; i++)
+		for (int i = 0; i < (int)pgm->height; i++)
 		{
 			pgm->data[i] = (unsigned char *)malloc(pgm->width * sizeof(unsigned char));
 
@@ -97,7 +104,12 @@ bool openPGM(PGMImage *pgm, const char *filename)
 
 			// Read the gray values and
 			// write on allocated memory
-			fread(pgm->data[i], sizeof(unsigned char), pgm->width, pgmfile);
+			
+			size_t result;
+			result = fread(pgm->data[i], sizeof(unsigned char), pgm->width, pgmfile);
+			if(result != pgm->width){
+				fputs("Reading error",stderr); exit (3);
+			}
 		}
 	}
 
@@ -135,9 +147,9 @@ void printImageDetails(PGMImage *pgm, const char *filename)
 	printf("Max Gray value : %d\n", pgm->maxValue);
 
 //Test de ce que contient data
-	for (int i = 0; i < pgm->height/pgm->height+2; i++)
+	for (int i = 0; i < (int)pgm->height/(int)pgm->height+2; i++)
 	{
-		for (int j = 0; j < pgm->width; j++)
+		for (int j = 0; j < (int)pgm->width; j++)
 		{
 			printf("data[%i][%i] = %i \n",i,j, pgm->data[i][j]);
 		}	
@@ -147,7 +159,7 @@ void printImageDetails(PGMImage *pgm, const char *filename)
 }
 
 // Driver Code
-int main(int argc, char const *argv[])
+/*int main(int argc, char const *argv[])
 {
 	PGMImage *pgm = (PGMImage *)malloc(sizeof(PGMImage));
 	const char *ipfile;
@@ -165,4 +177,4 @@ int main(int argc, char const *argv[])
 		printImageDetails(pgm, ipfile);
 
 	return 0;
-}
+}*/

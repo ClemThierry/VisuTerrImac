@@ -9,6 +9,7 @@
 #include "../include/main.h"
 #include "../include/gldrawing.h"
 #include "../include/skybox.h"
+#include "../include/create_object.h"
 
 #define STEP_ANGLE	M_PI/90.
 #define STEP_PROF	0.05
@@ -47,7 +48,8 @@ void display(){
 		drawSkyBox(texture);
 		glDepthMask(GL_TRUE);
 		gluLookAt(posX,posY,posZ,pVise.x,pVise.y,pVise.z,vectUp.x,vectUp.y,vectUp.z);
-		drawCube();
+		//drawCube();
+		drawTerrain();
     
 	glPopMatrix();
 
@@ -111,6 +113,8 @@ void init(){
     //initialize viewing values 
     glLoadIdentity();
     gluPerspective(60.,1.,0.01,10000.);
+
+	createCoordinates();//creation coordonnées de la map
 }
 
 int main(int argc, char** argv)

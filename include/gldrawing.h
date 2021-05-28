@@ -2,6 +2,7 @@
 #define __GL_DRAWING_H
 
 #include <GL/gl.h>
+#include "create_object.h"
 
 typedef struct vect
 {
@@ -23,5 +24,6 @@ Vect prodVect(Vect v1, Vect v2);
 //Draw Square (with triangle)
 
 //Draw Terrain
+void drawTerrain();
 
 #endif

@@ -1,4 +1,5 @@
 #include "../include/gldrawing.h"
+#include "../include/create_object.h"
 #include <stdio.h>
 
 void glDrawRepere(float length) {
@@ -77,4 +78,17 @@ Vect prodVect(Vect v1, Vect v2){
 	newVect.y = v1.z*v2.x - v1.x*v2.z;
 	newVect.z = v1.x*v2.y - v1.y*v2.x;
 	return newVect;
+}
+
+void drawTerrain(){
+	float white[3] = {1.0,1.0,1.0};
+	glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,white);
+	glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,1.0);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glVertexPointer(3,GL_FLOAT,0,vertex_coord);
+	glNormalPointer(GL_FLOAT,0,normal_coord);
+	glDrawElements(GL_TRIANGLES,3*triangle_number,GL_UNSIGNED_INT,triangle_index);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
 }
