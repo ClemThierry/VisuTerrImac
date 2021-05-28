@@ -17,8 +17,7 @@
 
 GLuint texture;
 
-float latitude=0;
-float longitude=0;
+float yaw = 0;
 camera *cam;
 
 void display(){
@@ -89,9 +88,11 @@ static void kbdSpFunc(int c, int x, int y) {
       cam->avancer(-0.1);
 			break;
 		case GLUT_KEY_LEFT :
+			yaw-=0.1;
 			//posX-=STEP_PROF;
 			break;
 		case GLUT_KEY_RIGHT :
+			yaw+=0.1;
 			//posX+=STEP_PROF;
 			break;
 		case GLUT_KEY_PAGE_UP :
@@ -103,6 +104,7 @@ static void kbdSpFunc(int c, int x, int y) {
 		default:
 			printf("Appui sur une touche spéciale\n");
 	}
+	camera->setangle(yaw);
 	glutPostRedisplay();
 }
 
