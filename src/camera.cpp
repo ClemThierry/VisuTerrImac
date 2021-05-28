@@ -27,6 +27,6 @@ void camera::setdimension(float sw, float sh){
     this->height = sh;
 }
 
-void setangle(float angle){
+void camera::setangle(float angle){
     this->orientation = glm::vec3(std::cos(angle), std::sin(angle), 0);
 }
