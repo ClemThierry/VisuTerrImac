@@ -10,26 +10,16 @@
 #include "../include/gldrawing.h"
 #include "../include/skybox.h"
 #include "../include/create_object.h"
+#include "../include/camera.h"
 
 #define STEP_ANGLE	M_PI/90.
 #define STEP_PROF	0.05
 
 GLuint texture;
 
-float latitude = 0.;
-float longitude = M_PI/2.;
-float angle = M_PI/2.;
-
-float posX = 0.;
-float posY = 0.;
-float posZ = 0.;
+camera *cam;
 
 void display(){
-
-	Vect pVise = createVect(posX+cos(latitude)*sin(longitude),posY+sin(latitude)*sin(longitude),posZ+cos(longitude));
-	Vect vise = createVect(cos(latitude)*sin(longitude),sin(latitude)*sin(longitude),cos(longitude));
-	Vect vectL = createVect(cos(latitude + angle),sin(latitude + angle),0.);
-	Vect vectUp = prodVect(vise,vectL);
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -47,8 +37,9 @@ void display(){
 		glDepthMask(GL_FALSE);
 		drawSkyBox(texture);
 		glDepthMask(GL_TRUE);
-		gluLookAt(posX,posY,posZ,pVise.x,pVise.y,pVise.z,vectUp.x,vectUp.y,vectUp.z);
 		//drawCube();
+		glm::mat4 perspective = cam->calculermatrice();
+        glLoadMatrixf(glm::value_ptr(perspective));
 		drawTerrain();
     
 	glPopMatrix();
@@ -64,16 +55,16 @@ static void kbdFunc(unsigned char c, int x, int y) {
 			exit(0);
 			break;
 		case 'S' : case 's' : 
-			longitude+= STEP_ANGLE;
+			//longitude+= STEP_ANGLE;
 			break;
 		case 'Z' : case 'z' : 
-			longitude -= STEP_ANGLE;
+			//longitude -= STEP_ANGLE;
 			break;
 		case 'D' : case 'd' : 
-			latitude -= STEP_ANGLE;
+			//latitude -= STEP_ANGLE;
 			break;
 		case 'Q' : case 'q' : 
-			latitude += STEP_ANGLE;
+			//latitude += STEP_ANGLE;
 			break;
 		default:
 			printf("Appui sur la touche %c\n",c);
@@ -84,22 +75,22 @@ static void kbdFunc(unsigned char c, int x, int y) {
 static void kbdSpFunc(int c, int x, int y) {
 	switch(c) {
 		case GLUT_KEY_UP :
-			posY-=STEP_PROF;
+			//posY-=STEP_PROF;
 			break;
 		case GLUT_KEY_DOWN :
-			posY+=STEP_PROF;
+			//posY+=STEP_PROF;
 			break;
 		case GLUT_KEY_LEFT :
-			posX-=STEP_PROF;
+			//posX-=STEP_PROF;
 			break;
 		case GLUT_KEY_RIGHT :
-			posX+=STEP_PROF;
+			//posX+=STEP_PROF;
 			break;
 		case GLUT_KEY_PAGE_UP :
-			posZ+=STEP_PROF;
+			//posZ+=STEP_PROF;
 			break;
 		case GLUT_KEY_PAGE_DOWN :
-			posZ-=STEP_PROF;
+			//posZ-=STEP_PROF;
 			break;
 		default:
 			printf("Appui sur une touche spéciale\n");
@@ -108,11 +99,11 @@ static void kbdSpFunc(int c, int x, int y) {
 }
 
 void init(){
+	cam = new camera(M_PI/3, 0.3, 10000, 500, 500);
     //select clearing (background) color
     glClearColor(0.3,0.3,0.3,1.0);
     //initialize viewing values 
     glLoadIdentity();
-    gluPerspective(60.,1.,0.01,10000.);
 
 	createCoordinates();//creation coordonnées de la map
 }

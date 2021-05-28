@@ -5,11 +5,14 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <camera.h>
 
 void dessinercube(float width, glm::vec3 pos);
 
 int main()
 {
+    float PI=3.1416;
+
     // crée la fenêtre
     sf::Window window(sf::VideoMode(800, 600), "OpenGL", sf::Style::Default, sf::ContextSettings(32));
     window.setVerticalSyncEnabled(true);
@@ -24,8 +27,13 @@ int main()
     bool running = true;
     int width, height;
 
+    camera cam(PI/2, 0.1, 5.0, 800, 600);
+
     while (running)
     {
+
+        cam.avancer(1);
+        
         // gestion des évènements
         sf::Event event;
         while (window.pollEvent(event))
@@ -43,12 +51,14 @@ int main()
                 //on sauvergarde les dimensions
                 width = event.size.width;
                 height = event.size.height;
+
+                cam.setdimension(width, height);
             }
             else if (event.type == sf::Event::MouseMoved)           //essai couleurs fond
             {
                 float rouge = (float)event.mouseMove.x/width;
                 float bleu = (float)event.mouseMove.y/height;
-                glClearColor(rouge,0,bleu,1);
+                glClearColor(rouge,bleu,0,1);
             }
         }
 
@@ -56,16 +66,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // dessin...
-        float PI=3.1416;
 
-        glm::mat4 perspective = glm::perspective(PI/3, (float)width/height, 0.1f, 5.0f);
+        glm::mat4 perspective = cam.calculermatrice();
+        glLoadMatrixf(glm::value_ptr(perspective));
 
-        glm::mat4 rotation = glm::rotate(PI/4,glm::vec3(1.0f,1.0f,0.0f));
-
-        glm::mat4 finale = perspective;
-        glLoadMatrixf(glm::value_ptr(finale));
-
-        dessinercube(1.2, glm::vec3(4.0f,0.0f,-4.5f));
+        dessinercube(1.2, glm::vec3(20.0f,0.0f,0.0f));
 
         // termine la trame courante (en interne, échange les deux tampons de rendu)
         window.display();
@@ -120,20 +125,15 @@ void dessinercube(float width, glm::vec3 pos){
         0,0,1
     };
 
-    glPushMatrix();
-    glTranslatef(pos.x, pos.y, pos.z);
-
     glBegin(GL_QUADS);
 
     for(int i=0 ; i<24 ; i++){
         int j=3*i;
         int c=i/4;
         glColor3f(couleurs[c], couleurs[c+1], couleurs[c+2]);
-        glVertex3f(coord[j], coord[j+1], coord[j+2]);
+        glVertex3f(coord[j]+pos.x, coord[j+1]+pos.y, coord[j+2]+pos.z);
     }
 
     glEnd();
-
-    glPopMatrix();
 
 }
