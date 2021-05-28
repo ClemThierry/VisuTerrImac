@@ -12,50 +12,61 @@
 #include "../include/create_object.h"
 #include "../include/camera.h"
 
-#define STEP_ANGLE	M_PI/90.
-#define STEP_PROF	0.05
+#include <quadtree.h>
+#include <heightmap.h>
+
+#define STEP_ANGLE    M_PI/90.
+#define STEP_PROF    0.05
 
 GLuint texture;
 
 float yaw = 0;
 camera *cam;
+const unsigned char mapdata[] = {
+  255, 128, 255,
+  255, 128, 255,
+  255, 128, 255
+};
+glm::vec2 minp(-10.0f, -10.0f);
+glm::vec2 maxp(10.0f, 10.0f);
+HeightMap map(maxp - minp, mapdata, 3, 3, 255);
 
 void display(){
 
-	Quad qt;
+    Quad qt;
     
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
-	
-	glLoadIdentity();
+    
+    glLoadIdentity();
 
-	glPushMatrix();
+    glPushMatrix();
 
-		glm::mat4 perspective = cam->calculermatrice();
+        glm::mat4 perspective = cam->calculermatrice();
         glLoadMatrixf(glm::value_ptr(perspective));
 
-		qt.build(glm::vec2(-1.0f,-1.0f), glm::vec2(1.0f,1.0f), perspective);
+        qt.build(minp, maxp, perspective);
 
-		glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
     glDisable(GL_LIGHT0);
     glDisable(GL_LIGHTING);
-		//glRotatef(-(latitude/M_PI)*180,0.,0.,1.);
-		//glRotatef(-(longitude/M_PI)*180,1.,0.,0.);
-		glDepthMask(GL_FALSE);
-		drawSkyBox(texture);
-		glDrawRepere(2.0);
-		glDepthMask(GL_TRUE);
-		//drawCube();
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
-		qt.render(glm::vec2(-1.0f,-1.0f), glm::vec2(1.0f,1.0f), NULL);
+        //glRotatef(-(latitude/M_PI)*180,0.,0.,1.);
+        //glRotatef(-(longitude/M_PI)*180,1.,0.,0.);
+        glDepthMask(GL_FALSE);
+        drawSkyBox(texture);
+        glDrawRepere(2.0);
+        glDepthMask(GL_TRUE);
+        //drawCube();
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        qt.render(minp, maxp, &map);
     
-	glPopMatrix();
+    glPopMatrix();
 
-	glFinish();
+    glFinish();
 
-	glutSwapBuffers();
+    glutSwapBuffers();
 }
 
 static void kbdFunc(unsigned char c, int x, int y) {

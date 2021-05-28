@@ -68,7 +68,7 @@ GLuint genSkybox(){
 
 void drawSkyBox(GLuint textId){
     // Taille du cube
-    float t = 1.0f;
+    float t = 1000.0f;
     glColor3f(1.,1.,1.);
     glEnable(GL_TEXTURE_CUBE_MAP_ARB); 
     

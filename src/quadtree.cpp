@@ -1,5 +1,8 @@
 #include <quadtree.h>
 #include <cmath>
+#include <GL/gl.h>
+#include <heightmap.h>
+#include <iostream>
 
 void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map)
 {
@@ -7,13 +10,18 @@ void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map)
 
         //code for a leaf (rendu)
 
-        glm::vec3 tab[6] = {                //"rectangle" abccda
-            glm::vec3(topleft,0.0f),
-            glm::vec3(bottomright.x, topleft.y,0.0f),
-            glm::vec3(bottomright,0.0f),
-            glm::vec3(bottomright,0.0f),
-            glm::vec3(topleft.x, bottomright.y,0.0f),
-            glm::vec3(topleft,0.0f)
+        const glm::vec2 topright(bottomright.x, topleft.y);
+        const glm::vec2 bottomleft(topleft.x, bottomright.y);
+
+        const float z = -1.0f;
+        const float hf = 5.0f;
+        const glm::vec3 tab[6] = {                //"rectangle" abccda
+            glm::vec3(topleft,hf*(z+map->get_height(topleft))),
+            glm::vec3(topright,hf*(z+map->get_height(topright))),
+            glm::vec3(bottomright,hf*(z+map->get_height(bottomright))),
+            glm::vec3(bottomright,hf*(z+map->get_height(bottomright))),
+            glm::vec3(bottomleft,hf*(z+map->get_height(bottomleft))),
+            glm::vec3(topleft,hf*(z+map->get_height(topleft)))
         };
 
         glBegin(GL_TRIANGLES);
@@ -59,10 +67,10 @@ void Quad::clear(){                     //delete children
 void Quad::build(glm::vec2 topleft, glm::vec2 bottomright, glm::mat4 camera) {
     glm::mat4 inverse = glm::inverse(camera);
     glm::vec4 carre[4] = {                              //coupe horizontale du cube
-        glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f),
-        glm::vec4(1.0f, -1.0f, 0.0f, 1.0f),
-        glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
-        glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f)
+        glm::vec4(-1.0f, 0.0f, -1.0f, 1.0f),
+        glm::vec4(1.0f, 0.0f, -1.0f, 1.0f),
+        glm::vec4(1.0f, 0.0f, 1.0f, 1.0f),
+        glm::vec4(-1.0f, 0.0f, 1.0f, 1.0f)
     };
     glm::vec2 frustum[4];
     for(int i=0 ; i<4 ; i++){
@@ -148,7 +156,8 @@ bool collision(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]) {
 }
 
 void Quad::build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4], int level){
-    if(level == 10 || !collision(topleft, bottomright, frustum) ){            //condition d'arret : on a atteint la profondeur/subdivision maximale ou pas de collision
+    if(level == 5 || !collision(topleft, bottomright, frustum) ){            //condition d'arret : on a atteint la profondeur/subdivision maximale ou pas de collision
+      std::cout << "stop at " << level << "\n";
         return;
     }
     else{                      //on crée des enfants
