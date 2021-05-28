@@ -21,6 +21,8 @@ float yaw = 0;
 camera *cam;
 
 void display(){
+
+	Quad qt;
     
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -32,6 +34,8 @@ void display(){
 
 		glm::mat4 perspective = cam->calculermatrice();
         glLoadMatrixf(glm::value_ptr(perspective));
+
+		qt.build(glm::vec2(-1.0f,-1.0f), glm::vec2(1.0f,1.0f), perspective);
 
 		glEnable(GL_DEPTH_TEST);
     glDisable(GL_LIGHT0);
@@ -45,7 +49,7 @@ void display(){
 		//drawCube();
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
-		drawTerrain();
+		qt.render(glm::vec2(-1.0f,-1.0f), glm::vec2(1.0f,1.0f), NULL);
     
 	glPopMatrix();
 

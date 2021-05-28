@@ -4,8 +4,25 @@
 void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map)
 {
     if(children[0] == NULL ){        //test if it is a leaf
+
         //code for a leaf (rendu)
+
+        glm::vec3 tab[6] = {                //"rectangle" abccda
+            glm::vec3(topleft,0.0f),
+            glm::vec3(bottomright.x, topleft.y,0.0f),
+            glm::vec3(bottomright,0.0f),
+            glm::vec3(bottomright,0.0f),
+            glm::vec3(topleft.x, bottomright.y,0.0f),
+            glm::vec3(topleft,0.0f)
+        };
+
+        glBegin(GL_TRIANGLES);
+        for(int i=0 ; i<6 ; i++){
+            glVertex3f(tab[i].x, tab[i].y, tab[i].z);
+        }
+        glEnd();
     }
+
     else{                           //node
 
         const glm::vec2 half = (topleft + bottomright) * 0.5f;
@@ -39,7 +56,20 @@ void Quad::clear(){                     //delete children
     }
 }
 
-void Quad::build(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]) {
+void Quad::build(glm::vec2 topleft, glm::vec2 bottomright, glm::mat4 camera) {
+    glm::mat4 inverse = glm::inverse(camera);
+    glm::vec4 carre[4] = {                              //coupe horizontale du cube
+        glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f),
+        glm::vec4(1.0f, -1.0f, 0.0f, 1.0f),
+        glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
+        glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f)
+    };
+    glm::vec2 frustum[4];
+    for(int i=0 ; i<4 ; i++){
+        glm::vec4 p = inverse * carre[i];
+        p/=p.w;
+        frustum[i] = glm::vec2(p.x,p.y);
+    }
     build_rec(topleft, bottomright, frustum, 0);
 }
 

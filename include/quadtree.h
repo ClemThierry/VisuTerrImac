@@ -35,7 +35,7 @@ class Quad
 
     void clear();
 
-    void build(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]);
+    void build(glm::vec2 topleft, glm::vec2 bottomright, glm::mat4 camera);
 
     void build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4], int level);
 
