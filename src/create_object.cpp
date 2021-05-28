@@ -41,9 +41,9 @@ void createCoordinates() {
     float width = 1.0;
     for(int i=0;i<nb_pt_per_side;i++) {
         for(int j=0;j<nb_pt_per_side;j++) {
-            vertex_coord[idx++]  = - width/2.0 + j*width/(float)nb_div;
-            vertex_coord[idx++]  = hauteur[i][j];
+            vertex_coord[idx++]  = width/2.0 + j*width/(float)nb_div;
             vertex_coord[idx++]  = width/2.0 - i*width/(float)nb_div; 
+            vertex_coord[idx++]  = hauteur[i][j];
             normal_coord[idxn++] = 0.0;
             normal_coord[idxn++] = 1.0;
             normal_coord[idxn++] = 0.0;
@@ -61,5 +61,4 @@ void createCoordinates() {
             triangle_index[idxt++] = (i+1)*nb_pt_per_side + j;
         }
     }
-	
 }

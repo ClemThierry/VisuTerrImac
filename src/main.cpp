@@ -17,6 +17,8 @@
 
 GLuint texture;
 
+float latitude=0;
+float longitude=0;
 camera *cam;
 
 void display(){
@@ -29,17 +31,21 @@ void display(){
 
 	glPushMatrix();
 
+		glm::mat4 perspective = cam->calculermatrice();
+        glLoadMatrixf(glm::value_ptr(perspective));
+
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LIGHT0);
-		glDrawRepere(2.0);
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHTING);
 		glRotatef(-(latitude/M_PI)*180,0.,0.,1.);
 		glRotatef(-(longitude/M_PI)*180,1.,0.,0.);
 		glDepthMask(GL_FALSE);
 		drawSkyBox(texture);
+		glDrawRepere(2.0);
 		glDepthMask(GL_TRUE);
 		//drawCube();
-		glm::mat4 perspective = cam->calculermatrice();
-        glLoadMatrixf(glm::value_ptr(perspective));
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
 		drawTerrain();
     
 	glPopMatrix();
@@ -55,16 +61,16 @@ static void kbdFunc(unsigned char c, int x, int y) {
 			exit(0);
 			break;
 		case 'S' : case 's' : 
-			//longitude+= STEP_ANGLE;
+			longitude+= STEP_ANGLE;
 			break;
 		case 'Z' : case 'z' : 
-			//longitude -= STEP_ANGLE;
+			longitude -= STEP_ANGLE;
 			break;
 		case 'D' : case 'd' : 
-			//latitude -= STEP_ANGLE;
+			latitude -= STEP_ANGLE;
 			break;
 		case 'Q' : case 'q' : 
-			//latitude += STEP_ANGLE;
+			latitude += STEP_ANGLE;
 			break;
 		default:
 			printf("Appui sur la touche %c\n",c);
@@ -76,9 +82,11 @@ static void kbdSpFunc(int c, int x, int y) {
 	switch(c) {
 		case GLUT_KEY_UP :
 			//posY-=STEP_PROF;
+      cam->avancer(0.1);
 			break;
 		case GLUT_KEY_DOWN :
 			//posY+=STEP_PROF;
+      cam->avancer(-0.1);
 			break;
 		case GLUT_KEY_LEFT :
 			//posX-=STEP_PROF;
@@ -106,6 +114,16 @@ void init(){
     glLoadIdentity();
 
 	createCoordinates();//creation coordonnées de la map
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+
+  float light_color[] = { 253.0f/255, 184.0/255, 19.0f/255, 1.0f };
+  float light_pos[] = { 0.0f, 0.0f, 10.0f };
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
+  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 }
 
 int main(int argc, char** argv)

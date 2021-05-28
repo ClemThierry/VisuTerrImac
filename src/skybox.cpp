@@ -120,5 +120,4 @@ void drawSkyBox(GLuint textId){
     
     glDisable(GL_TEXTURE_CUBE_MAP_ARB); 
     // Réinitialisation de la matrice ModelView
-    glPopMatrix();
 }
