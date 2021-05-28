@@ -13,15 +13,17 @@ OBJ_FILES 	= $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o, $(SRC_FILES))
 EXEC_BIN	= visu.out
 
 
-all : $(OBJ_FILES)
+all : visu
 
 visu : $(OBJ_FILES)
 	@mkdir -p $(BIN_DIR)/
 	$(CC) -o $(BIN_DIR)/$(EXEC_BIN) $(OBJ_FILES) $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	mkdir -p "$(@D)"
+	@mkdir -p "$(@D)"
 	$(CC) -c $< -o $@ $(CFLAGS) $(INC_DIR)
+
+.PHONY: clean
 
 clean :
 	rm -rf *~

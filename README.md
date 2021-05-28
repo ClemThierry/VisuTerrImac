@@ -17,3 +17,10 @@
 # Fait
 
 - Récupérer les infos de l’image → .pgm (la heightmap)
+
+# Règles
+
+- que des fichiers `.cpp` (pas de `.c`) dans le dossier `src` (renommer les `.c` en `.cpp`)
+- Plus besoin de toucher au Makefile
+- Il faudrait un dossier pour le code qui ne compile pas (pour le différencier de celui dans le dossier `src`)
+- Courage pour la fin du projet <3
