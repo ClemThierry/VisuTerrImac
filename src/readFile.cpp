@@ -5,7 +5,10 @@
 
 infoTimac readTimac(){
     infoTimac newTimac;
-    std::ifstream infile("../nouveauTerrain.timac");
+    std::ifstream infile("config.timac");
+    if(!infile.is_open()){
+        printf("Erreur");
+    }
     std::getline(infile,newTimac.filename);
     infile >> newTimac.xSize;
     infile >> newTimac.ySize;

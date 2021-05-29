@@ -1,17 +1,17 @@
-#ifndef READFILE_H
-#define READFILE_H
+#ifndef __READFILE_H
+#define __READFILE_H
 #include <string>
 
 struct infoTimac
 {
     std::string filename;
-    int xSize;
-    int ySize;
-    int zNear;
-    int zFar;
-    int zMin;
-    int zMax;
-    int fov;
+    float xSize;
+    float ySize;
+    float zNear;
+    float zFar;
+    float zMin;
+    float zMax;
+    float fov;
 };
 
 infoTimac readTimac();

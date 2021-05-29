@@ -7,42 +7,26 @@
 #include <GL/gl.h>
 
 #include "../include/main.h"
-#include "../include/gldrawing.h"
-#include "../include/skybox.h"
-//#include "../include/create_object.h"
-#include "../include/camera.h"
-#include "../include/quadtree.h"
-#include "../include/heightmap.h"
-#include "../include/ReadPGM.h"
 
 GLuint texture;
+GLuint sol;
+
+infoTimac info;
 
 float yaw = 0.;
 float tilt = 0.;
 camera *cam;
+const unsigned char mapdata[] = {
+  255, 128, 255,
+  255, 128, 255,
+  255, 128, 255
+};
 glm::vec2 minp(-10.0f, -10.0f);
 glm::vec2 maxp(10.0f, 10.0f);
-
+HeightMap map(maxp - minp, mapdata, 3, 3, 255);
 
 void display(){
-    PGMImage *pgm = (PGMImage *)malloc(sizeof(PGMImage));
-    const char *ipfile;
-    ipfile = "./maps/image.pbm";
-    if(openPGM(pgm, ipfile)){
-      int nbdata =pgm->height*pgm->width;
-      unsigned char mapdata[nbdata];
-      int index=0;
-            //printf("data[0][0] = %i \n",pgm->data[0][0]);
-      for(int i=0; i< (int)pgm->height; i++){
-          for(int j=0; j< (int)pgm->width; j++){
-            mapdata[index]=pgm->data[i][j];
-            index++;
-          }
-      }
-
-      HeightMap map(maxp - minp, mapdata, (int)pgm->height, (int)pgm->height, (unsigned char )pgm->maxValue);    
-    
-        Quad qt;
+    Quad qt;
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -66,22 +50,13 @@ void display(){
         glDepthMask(GL_TRUE);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
-        qt.render(minp, maxp, &map);
+        qt.render(minp, maxp, &map, sol);
     
     glPopMatrix();
 
     glFinish();
 
     glutSwapBuffers();
-    };
-    /*const unsigned char mapdata[] = {
-      255, 128, 255,
-      255, 128, 255,
-      255, 128, 255
-    };*/
-
-
-
 }
 
 static void kbdFunc(unsigned char c, int x, int y) {
@@ -136,11 +111,11 @@ static void kbdSpFunc(int c, int x, int y) {
 }
 
 void init(){
-	cam = new camera(M_PI/3, 0.3, 10000, 500, 500);
-    //select clearing (background) color
-    glClearColor(0.3,0.3,0.3,1.0);
-    //initialize viewing values 
-    glLoadIdentity();
+	cam = new camera(info.fov/180*M_PI, info.zNear, info.zFar, 500, 500);
+  //select clearing (background) color
+  glClearColor(0.3,0.3,0.3,1.0);
+  //initialize viewing values 
+  glLoadIdentity();
 
 	createCoordinates();//creation coordonnées de la map
 
@@ -171,10 +146,11 @@ int main(int argc, char** argv)
     
     //Create the window
     glutCreateWindow("VisuTerrIMAC");
-    
+    info = readTimac();
     //Call init (initialise GLUT
     init();
 	  texture = genSkybox();
+    sol = chargeTexture("../maps/text/stone.png");
     
     //Call "display" function
     glutDisplayFunc(display);
