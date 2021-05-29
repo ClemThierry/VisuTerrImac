@@ -23,7 +23,7 @@ class camera {
     void avancer(float distance);
     glm::mat4 calculermatrice();                                                            //projection en perspective
     void setdimension(float sw, float sh);
-    void setangle(float angle);
+    void setangle(float angle, float angle2);
 };
 
 #endif

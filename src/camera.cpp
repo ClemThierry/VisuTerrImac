@@ -1,4 +1,4 @@
-#include <camera.h>
+#include "../include/camera.h"
 #include <cmath>
 
 camera::camera(float fov, float near, float far, float width, float height){
@@ -27,6 +27,6 @@ void camera::setdimension(float sw, float sh){
     this->height = sh;
 }
 
-void camera::setangle(float angle){
-    this->orientation = glm::vec3(std::cos(angle), std::sin(angle), 0);
+void camera::setangle(float angle, float angle2){
+    this->orientation = glm::vec3(std::cos(angle), std::sin(angle), std::sin(angle2));
 }

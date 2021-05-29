@@ -11,16 +11,13 @@
 #include "../include/skybox.h"
 #include "../include/create_object.h"
 #include "../include/camera.h"
-
-#include <quadtree.h>
-#include <heightmap.h>
-
-#define STEP_ANGLE    M_PI/90.
-#define STEP_PROF    0.05
+#include "../include/quadtree.h"
+#include "../include/heightmap.h"
 
 GLuint texture;
 
-float yaw = 0;
+float yaw = 0.;
+float tilt = 0.;
 camera *cam;
 const unsigned char mapdata[] = {
   255, 128, 255,
@@ -49,15 +46,12 @@ void display(){
         qt.build(minp, maxp, perspective);
 
         glEnable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHT0);
-    glDisable(GL_LIGHTING);
-        //glRotatef(-(latitude/M_PI)*180,0.,0.,1.);
-        //glRotatef(-(longitude/M_PI)*180,1.,0.,0.);
+        glDisable(GL_LIGHT0);
+        glDisable(GL_LIGHTING);
         glDepthMask(GL_FALSE);
         drawSkyBox(texture);
         glDrawRepere(2.0);
         glDepthMask(GL_TRUE);
-        //drawCube();
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
         qt.render(minp, maxp, &map);
@@ -74,52 +68,49 @@ static void kbdFunc(unsigned char c, int x, int y) {
 		case 27 :
 			exit(0);
 			break;
-		case 'S' : case 's' : 
-			//longitude+= STEP_ANGLE;
-			break;
 		case 'Z' : case 'z' : 
-			//longitude -= STEP_ANGLE;
+			if(tilt < 0.5)tilt+= STEP_ANGLE;
 			break;
-		case 'D' : case 'd' : 
-			//latitude -= STEP_ANGLE;
+		case 'S' : case 's' : 
+			if(tilt > -0.5) tilt-= STEP_ANGLE;
 			break;
-		case 'Q' : case 'q' : 
-			//latitude += STEP_ANGLE;
+		case 'F' : case 'f' : 
+			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+			break;
+		case 'P' : case 'p' : 
+			glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 			break;
 		default:
 			printf("Appui sur la touche %c\n",c);
 	}
+  cam->setangle(yaw,tilt);
 	glutPostRedisplay();
 }
 
 static void kbdSpFunc(int c, int x, int y) {
 	switch(c) {
 		case GLUT_KEY_UP :
-			//posY-=STEP_PROF;
       cam->avancer(0.1);
 			break;
 		case GLUT_KEY_DOWN :
-			//posY+=STEP_PROF;
       cam->avancer(-0.1);
 			break;
 		case GLUT_KEY_LEFT :
 			yaw+=0.1;
-			//posX-=STEP_PROF;
 			break;
 		case GLUT_KEY_RIGHT :
 			yaw-=0.1;
-			//posX+=STEP_PROF;
 			break;
 		case GLUT_KEY_PAGE_UP :
-			//posZ+=STEP_PROF;
+			//posZ+=1;
 			break;
 		case GLUT_KEY_PAGE_DOWN :
-			//posZ-=STEP_PROF;
+			//posZ-=1;
 			break;
 		default:
 			printf("Appui sur une touche spéciale\n");
 	}
-	cam->setangle(yaw);
+	cam->setangle(yaw,tilt);
 	glutPostRedisplay();
 }
 
@@ -162,13 +153,13 @@ int main(int argc, char** argv)
     
     //Call init (initialise GLUT
     init();
-	texture = genSkybox();
+	  texture = genSkybox();
     
     //Call "display" function
     glutDisplayFunc(display);
 
-	glutKeyboardFunc(kbdFunc);
-	glutSpecialFunc(kbdSpFunc);
+	  glutKeyboardFunc(kbdFunc);
+	  glutSpecialFunc(kbdSpFunc);
     
     //Enter the GLUT event loop
     glutMainLoop();
