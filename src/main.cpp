@@ -9,28 +9,40 @@
 #include "../include/main.h"
 #include "../include/gldrawing.h"
 #include "../include/skybox.h"
-#include "../include/create_object.h"
+//#include "../include/create_object.h"
 #include "../include/camera.h"
 #include "../include/quadtree.h"
 #include "../include/heightmap.h"
+#include "../include/ReadPGM.h"
 
 GLuint texture;
 
 float yaw = 0.;
 float tilt = 0.;
 camera *cam;
-const unsigned char mapdata[] = {
-  255, 128, 255,
-  255, 128, 255,
-  255, 128, 255
-};
 glm::vec2 minp(-10.0f, -10.0f);
 glm::vec2 maxp(10.0f, 10.0f);
-HeightMap map(maxp - minp, mapdata, 3, 3, 255);
+
 
 void display(){
+    PGMImage *pgm = (PGMImage *)malloc(sizeof(PGMImage));
+    const char *ipfile;
+    ipfile = "./maps/image.pbm";
+    if(openPGM(pgm, ipfile)){
+      int nbdata =pgm->height*pgm->width;
+      unsigned char mapdata[nbdata];
+      int index=0;
+            //printf("data[0][0] = %i \n",pgm->data[0][0]);
+      for(int i=0; i< (int)pgm->height; i++){
+          for(int j=0; j< (int)pgm->width; j++){
+            mapdata[index]=pgm->data[i][j];
+            index++;
+          }
+      }
 
-    Quad qt;
+      HeightMap map(maxp - minp, mapdata, (int)pgm->height, (int)pgm->height, (unsigned char )pgm->maxValue);    
+    
+        Quad qt;
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -61,6 +73,15 @@ void display(){
     glFinish();
 
     glutSwapBuffers();
+    };
+    /*const unsigned char mapdata[] = {
+      255, 128, 255,
+      255, 128, 255,
+      255, 128, 255
+    };*/
+
+
+
 }
 
 static void kbdFunc(unsigned char c, int x, int y) {

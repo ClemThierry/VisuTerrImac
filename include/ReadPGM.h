@@ -1,6 +1,8 @@
 #ifndef READPGM_H
 #define READPGM_H
 
+#include <stdio.h>
+
 // Structure for storing the
 // image data
 typedef struct PGMImage {
@@ -8,7 +10,7 @@ typedef struct PGMImage {
 	unsigned int width;
 	unsigned int height;
 	unsigned int maxValue;
-	unsigned char** data; //convertir en tableau à double entrées (x,y --> coordonnées des points)
+	unsigned char** data; 
 
 } PGMImage;
 
