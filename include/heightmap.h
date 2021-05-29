@@ -13,12 +13,15 @@ class HeightMap {
   const unsigned char *data;
   glm::vec2 world_to_map;
   float height_norm;
+  float hOffset;
 
   float get_pixel(int x, int y);
 
   public:
-    HeightMap(glm::vec2 world_size, const unsigned char *data, int data_w, int data_h, unsigned char data_max);
+    HeightMap(glm::vec2 world_size, const unsigned char *data, int data_w, int data_h, int data_max, float hMin, float hMax);
     float get_height(glm::vec2 pos);
+
+    HeightMap() = default;
 };
 
 #endif

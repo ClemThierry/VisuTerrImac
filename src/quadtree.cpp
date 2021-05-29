@@ -1,10 +1,9 @@
-#include <quadtree.h>
+#include "../include/quadtree.h"
 #include <cmath>
-#include <GL/gl.h>
-#include <heightmap.h>
+#include "../include/heightmap.h"
 #include <iostream>
 
-void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map)
+void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map, GLuint texture_id)
 {
     if(children[0] == NULL ){        //test if it is a leaf
 
@@ -13,19 +12,30 @@ void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map)
         const glm::vec2 topright(bottomright.x, topleft.y);
         const glm::vec2 bottomleft(topleft.x, bottomright.y);
 
-        const float z = -1.0f;
-        const float hf = 5.0f;
         const glm::vec3 tab[6] = {                //"rectangle" abccda
-            glm::vec3(topleft,hf*(z+map->get_height(topleft))),
-            glm::vec3(topright,hf*(z+map->get_height(topright))),
-            glm::vec3(bottomright,hf*(z+map->get_height(bottomright))),
-            glm::vec3(bottomright,hf*(z+map->get_height(bottomright))),
-            glm::vec3(bottomleft,hf*(z+map->get_height(bottomleft))),
-            glm::vec3(topleft,hf*(z+map->get_height(topleft)))
+            glm::vec3(topleft,map->get_height(topleft)),
+            glm::vec3(topright,map->get_height(topright)),
+            glm::vec3(bottomright,map->get_height(bottomright)),
+            glm::vec3(bottomright,map->get_height(bottomright)),
+            glm::vec3(bottomleft,map->get_height(bottomleft)),
+            glm::vec3(topleft,map->get_height(topleft)),
         };
 
+        const glm::vec2 tabCoord[6] = {
+            glm::vec2(0.,1.),
+            glm::vec2(1.,1.),
+            glm::vec2(1.,0.),
+            glm::vec2(1.,0.),
+            glm::vec2(0.,0.),
+            glm::vec2(0.,1.),
+        };
+
+        glColor3f(1.,1.,1.);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
         glBegin(GL_TRIANGLES);
         for(int i=0 ; i<6 ; i++){
+            glTexCoord2f(tabCoord[i].x,tabCoord[i].y);
             glVertex3f(tab[i].x, tab[i].y, tab[i].z);
         }
         glEnd();
@@ -50,7 +60,7 @@ void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map)
         };
 
         for(int i=0 ; i<4 ; i++){
-            children[i]->render(tl[i], br[i], map);        // nord-ouest -> nord-est -> sud-ouest -> sud-est
+            children[i]->render(tl[i], br[i], map, texture_id);        // nord-ouest -> nord-est -> sud-ouest -> sud-est
         }
     }
 }
@@ -157,7 +167,7 @@ bool collision(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]) {
 
 void Quad::build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4], int level){
     if(level == 5 || !collision(topleft, bottomright, frustum) ){            //condition d'arret : on a atteint la profondeur/subdivision maximale ou pas de collision
-      std::cout << "stop at " << level << "\n";
+      //std::cout << "stop at " << level << "\n";
         return;
     }
     else{                      //on crée des enfants

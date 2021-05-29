@@ -7,6 +7,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include "../include/heightmap.h"
 
 class camera {
     glm::vec3 pos;
@@ -24,6 +25,7 @@ class camera {
     glm::mat4 calculermatrice();                                                            //projection en perspective
     void setdimension(float sw, float sh);
     void setangle(float angle, float angle2);
+    void setHeight(HeightMap h);
 };
 
 #endif

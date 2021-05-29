@@ -30,3 +30,7 @@ void camera::setdimension(float sw, float sh){
 void camera::setangle(float angle, float angle2){
     this->orientation = glm::vec3(std::cos(angle), std::sin(angle), std::sin(angle2));
 }
+
+void camera::setHeight(HeightMap h){
+    pos.z = h.get_height({pos.x,pos.y})+2;
+}

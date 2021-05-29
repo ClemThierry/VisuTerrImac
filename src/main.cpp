@@ -11,21 +11,25 @@
 GLuint texture;
 GLuint sol;
 
+
 infoTimac info;
+IMG imgdata;
 
 float yaw = 0.;
 float tilt = 0.;
+bool ajust = false;
 camera *cam;
-const unsigned char mapdata[] = {
-  255, 128, 255,
-  255, 128, 255,
-  255, 128, 255
-};
-glm::vec2 minp(-10.0f, -10.0f);
-glm::vec2 maxp(10.0f, 10.0f);
-HeightMap map(maxp - minp, mapdata, 3, 3, 255);
+
+glm::vec2 minp;
+glm::vec2 maxp;
+HeightMap map;
 
 void display(){
+    if (ajust)
+    {
+      cam->setHeight(map);
+    }
+
     Quad qt;
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -65,16 +69,19 @@ static void kbdFunc(unsigned char c, int x, int y) {
 			exit(0);
 			break;
 		case 'Z' : case 'z' : 
-			if(tilt < 0.5)tilt+= STEP_ANGLE;
+			if(tilt < M_PI/2)tilt+= STEP_ANGLE;
 			break;
 		case 'S' : case 's' : 
-			if(tilt > -0.5) tilt-= STEP_ANGLE;
+			if(tilt > -M_PI/2) tilt-= STEP_ANGLE;
 			break;
 		case 'F' : case 'f' : 
 			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 			break;
 		case 'P' : case 'p' : 
 			glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+			break;
+    case 'H' : case 'h' : 
+      ajust = !ajust;
 			break;
 		default:
 			printf("Appui sur la touche %c\n",c);
@@ -112,6 +119,7 @@ static void kbdSpFunc(int c, int x, int y) {
 
 void init(){
 	cam = new camera(info.fov/180*M_PI, info.zNear, info.zFar, 500, 500);
+  cam->setHeight(map);
   //select clearing (background) color
   glClearColor(0.3,0.3,0.3,1.0);
   //initialize viewing values 
@@ -147,10 +155,14 @@ int main(int argc, char** argv)
     //Create the window
     glutCreateWindow("VisuTerrIMAC");
     info = readTimac();
+    maxp = {info.xSize/2,info.ySize/2};
+    minp = {-info.xSize/2,-info.ySize/2};
+    imgdata = readMap(info.filename);
+    map = HeightMap(maxp - minp, imgdata.data, imgdata.width, imgdata.height, imgdata.maxColorVal, info.zMin, info.zMax);
     //Call init (initialise GLUT
     init();
 	  texture = genSkybox();
-    sol = chargeTexture("../maps/text/stone.png");
+    sol = chargeTexture("./maps/text/stone.png");
     
     //Call "display" function
     glutDisplayFunc(display);
