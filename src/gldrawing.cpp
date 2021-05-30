@@ -1,6 +1,6 @@
 #include "../include/gldrawing.h"
-#include "../include/create_object.h"
 #include <stdio.h>
+#include <math.h>
 
 void glDrawRepere(float length) {
 	// dessin du repère
@@ -33,7 +33,29 @@ Vect prodVect(Vect v1, Vect v2){
 	return newVect;
 }
 
-void drawObject(){
-   //Rotate
-   //ChargeText
+void drawObject(GLuint texture_id,float objH,float x, float y, float z, float yaw){
+   	glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glBindTexture(GL_TEXTURE_2D,texture_id);
+
+	glPushMatrix();
+		glTranslatef(x,y,z+objH-1);
+		glRotatef(yaw/M_PI*180+90,0.,0.,1.);
+		glBegin(GL_QUADS);
+            glTexCoord2f(0,1);
+            glVertex3f(-objH,0.,-objH);
+                
+            glTexCoord2f(1,1);
+            glVertex3f(objH,0.,-objH);
+                
+            glTexCoord2f(1,0);
+            glVertex3f(objH,0.,objH);
+
+            glTexCoord2f(0,0);
+            glVertex3f(-objH,0.,objH);
+        glEnd();
+	glPopMatrix();
+	glBindTexture(GL_TEXTURE_2D,0);
+    glDisable(GL_TEXTURE_2D);
 }

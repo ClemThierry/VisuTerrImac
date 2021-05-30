@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <cstdlib>
 
 #include <GL/glut.h>
 #include <GL/glu.h>
@@ -10,7 +11,11 @@
 
 GLuint texture;
 GLuint sol;
-
+GLuint arbre;
+const int maxArbres = 25;
+int nbArbres = 10;
+float tabArbres[maxArbres*3];
+float arbresH = 6.;
 
 infoTimac info;
 IMG imgdata;
@@ -46,7 +51,6 @@ void display(){
 
         glm::mat4 vue = cam->vue();
         glLoadMatrixf(glm::value_ptr(vue));
-
         float light_pos[] = { 0.0f, 100.0f, 10.0f };
         glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
@@ -62,6 +66,10 @@ void display(){
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
         qt.render(minp, maxp, &map, sol);
+        for (int i = 0; i < nbArbres*3; i+=3)
+        {
+          drawObject(arbre,arbresH,tabArbres[i],tabArbres[i+1],tabArbres[i+2], yaw);
+        }
     
     glPopMatrix();
 
@@ -90,6 +98,12 @@ static void kbdFunc(unsigned char c, int x, int y) {
     case 'H' : case 'h' : 
       ajust = !ajust;
 			break;
+    case '1':
+      if (nbArbres+1<maxArbres) nbArbres++;
+      break;
+    case '2':
+      if (nbArbres>0) nbArbres--;
+      break;
 		default:
 			printf("Appui sur la touche %c\n",c);
 	}
@@ -111,12 +125,6 @@ static void kbdSpFunc(int c, int x, int y) {
 		case GLUT_KEY_RIGHT :
 			yaw-=0.1;
 			break;
-		case GLUT_KEY_PAGE_UP :
-			//posZ+=1;
-			break;
-		case GLUT_KEY_PAGE_DOWN :
-			//posZ-=1;
-			break;
 		default:
 			printf("Appui sur une touche spéciale\n");
 	}
@@ -127,18 +135,27 @@ static void kbdSpFunc(int c, int x, int y) {
 void init(){
 	cam = new camera(info.fov/180*M_PI, info.zNear, info.zFar, 500, 500);
   cam->setHeight(map);
+
+  for (int i = 0; i < maxArbres*3; i+=3)
+  {
+    float posXarb = std::rand()%((int)info.xSize/2)+0;
+    float posYarb = std::rand()%((int)info.ySize/2)+0;
+    float posZarb = map.get_height({posXarb,posYarb});
+    tabArbres[i] = posXarb;
+    tabArbres[i+1] = posYarb;
+    tabArbres[i+2] = posZarb;
+  }
+  
   //select clearing (background) color
   glClearColor(0.3,0.3,0.3,1.0);
   //initialize viewing values 
   glLoadIdentity();
 
-	createCoordinates();//creation coordonnées de la map
-
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
   float light_color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  float light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  float light_ambient[] = { 0.0f, 0.0f, 1.0f };
   float light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
   glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
@@ -169,7 +186,8 @@ int main(int argc, char** argv)
     //Call init (initialise GLUT
     init();
 	  texture = genSkybox();
-    sol = chargeTexture("./maps/text/stone.png");
+    sol = chargeTexture("./maps/text/rock.png");
+    arbre = chargeTexture("./maps/text/tree.png");
     
     //Call "display" function
     glutDisplayFunc(display);

@@ -6,7 +6,6 @@
 #include "../include/readFile.h"
 #include "../include/gldrawing.h"
 #include "../include/skybox.h"
-#include "../include/create_object.h"
 #include "../include/camera.h"
 #include "../include/quadtree.h"
 #include "../include/heightmap.h"

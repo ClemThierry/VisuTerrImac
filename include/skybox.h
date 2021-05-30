@@ -4,13 +4,7 @@
 #include <stdlib.h> 
 #include <string.h>
 #include <GL/gl.h>
-
-typedef struct Img
-{
-    int height;
-    int width;
-    unsigned char* data;
-} IMG;
+#include "../include/image.h"
 
 GLuint genSkybox();
 void drawSkyBox(GLuint textId);

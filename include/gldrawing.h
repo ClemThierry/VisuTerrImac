@@ -2,7 +2,6 @@
 #define __GL_DRAWING_H
 
 #include <GL/gl.h>
-#include "create_object.h"
 
 typedef struct vect
 {
@@ -21,9 +20,6 @@ Vect createVect(float x, float y, float z);
 
 Vect prodVect(Vect v1, Vect v2);
 
-//Draw Square (with triangle)
-
-//Draw Terrain
-void drawTerrain();
+void drawObject(GLuint texture_id,float objH,float x, float y, float z, float yaw);
 
 #endif
