@@ -83,7 +83,7 @@ void Quad::clear(){                     //delete children
     }
 }
 
-void Quad::build(glm::vec2 topleft, glm::vec2 bottomright, glm::mat4 camera) {
+void Quad::build(glm::vec2 topleft, glm::vec2 bottomright, glm::mat4 camera, glm::vec3 camPos) {
     glm::mat4 inverse = glm::inverse(camera);
     glm::vec4 carre[4] = {                              //coupe horizontale du cube
         glm::vec4(-1.0f, 0.0f, -1.0f, 1.0f),
@@ -97,7 +97,7 @@ void Quad::build(glm::vec2 topleft, glm::vec2 bottomright, glm::mat4 camera) {
         p/=p.w;
         frustum[i] = glm::vec2(p.x,p.y);
     }
-    build_rec(topleft, bottomright, frustum, 0);
+    build_rec(topleft, bottomright, frustum, 0, camPos);
 }
 
 bool collision(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]) {
@@ -174,8 +174,11 @@ bool collision(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]) {
     return true;
 }
 
-void Quad::build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4], int level){
-    if(level == 5 || !collision(topleft, bottomright, frustum) ){            //condition d'arret : on a atteint la profondeur/subdivision maximale ou pas de collision
+void Quad::build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4], int level,glm::vec3 camPos){
+    float distance = glm::distance(topleft,{camPos.x,camPos.y});
+    //printf("Distance : %f \n",distance);
+    int maxLevel = 8 - distance*6/150.0;
+    if(level > maxLevel || !collision(topleft, bottomright, frustum) ){            //condition d'arret : on a atteint la profondeur/subdivision maximale ou pas de collision
       //std::cout << "stop at " << level << "\n";
         return;
     }
@@ -199,7 +202,7 @@ void Quad::build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum
 
         for(int i=0 ; i<4 ; i++){
             children[i] = new Quad();
-            children[i]->build_rec(tl[i], br[i], frustum, level+1);
+            children[i]->build_rec(tl[i], br[i], frustum, level+1,camPos);
         }
     }
 }

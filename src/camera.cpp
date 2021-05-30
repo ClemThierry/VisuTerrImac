@@ -25,6 +25,10 @@ glm::mat4 camera::vue() {
     return glm::lookAt(pos, pos+orientation, glm::vec3(0.0f,0.0f,1.0f));
 }
 
+glm::mat4 camera::rotation() {
+    return glm::lookAt(glm::vec3{0.0}, orientation, glm::vec3(0.0f,0.0f,1.0f));
+}
+
 void camera::setdimension(float sw, float sh){
     this->width = sw;
     this->height = sh;
@@ -36,4 +40,8 @@ void camera::setangle(float angle, float angle2){
 
 void camera::setHeight(HeightMap h){
     pos.z = h.get_height({pos.x,pos.y})+2;
+}
+
+glm::vec3 camera::getPos(){
+    return this->pos;
 }

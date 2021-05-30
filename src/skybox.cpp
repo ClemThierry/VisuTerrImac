@@ -10,8 +10,8 @@ GLuint genSkybox(){
         GLenum cube_map_target[6] = {           
             GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB, //Left
             GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, //Right
-            GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, //Bottom
-            GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, //Top
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB, //Top
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB, //Bottom
             GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB, //Front
             GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB  //Back
         };
@@ -21,8 +21,8 @@ GLuint genSkybox(){
         const char* image_paths[6] = {
             "./maps/sky/lf.png",
             "./maps/sky/rt.png",
-            "./maps/sky/dn.png",
             "./maps/sky/up.png",
+            "./maps/sky/dn.png",
             "./maps/sky/ft.png",
             "./maps/sky/bk.png",
         };
@@ -68,7 +68,7 @@ GLuint genSkybox(){
 
 void drawSkyBox(GLuint textId){
     // Taille du cube
-    float t = 1000.0f;
+    float t = 1.0f;
     glColor3f(1.,1.,1.);
     glEnable(GL_TEXTURE_CUBE_MAP_ARB); 
     
@@ -84,24 +84,24 @@ void drawSkyBox(GLuint textId){
     glEnd();
     
     glBegin(GL_TRIANGLE_STRIP);            // X Positif
-        glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
+        glTexCoord3f(t,-t,-t); glVertex3f(t,-t,-t);
         glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
         glTexCoord3f(t,t,-t); glVertex3f(t,t,-t); 
         glTexCoord3f(t,t,t); glVertex3f(t,t,t);     
     glEnd();
     
     glBegin(GL_TRIANGLE_STRIP);            // Y Négatif    
-        glTexCoord3f(-t,-t,-t); glVertex3f(t,-t,t);
+        glTexCoord3f(-t,-t,-t); glVertex3f(-t,-t,-t);
         glTexCoord3f(-t,-t,t); glVertex3f(-t,-t,t);
-        glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
-        glTexCoord3f(t,-t,t); glVertex3f(-t,-t,-t);
+        glTexCoord3f(t,-t,-t); glVertex3f(t,-t,-t);
+        glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
     glEnd();
     
     glBegin(GL_TRIANGLE_STRIP);            // Y Positif        
-        glTexCoord3f(-t,t,-t); glVertex3f(t,t,t);
+        glTexCoord3f(-t,t,-t); glVertex3f(-t,t,-t);
         glTexCoord3f(t,t,-t); glVertex3f(t,t,-t); 
         glTexCoord3f(-t,t,t); glVertex3f(-t,t,t);
-        glTexCoord3f(t,t,t); glVertex3f(-t,t,-t);     
+        glTexCoord3f(t,t,t); glVertex3f(t,t,t);     
     glEnd();
     
     glBegin(GL_TRIANGLE_STRIP);            // Z Négatif        
@@ -119,5 +119,4 @@ void drawSkyBox(GLuint textId){
     glEnd();
     
     glDisable(GL_TEXTURE_CUBE_MAP_ARB); 
-    // Réinitialisation de la matrice ModelView
 }

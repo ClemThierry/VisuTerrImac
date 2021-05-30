@@ -12,8 +12,8 @@
 GLuint texture;
 GLuint sol;
 GLuint arbre;
-const int maxArbres = 25;
-int nbArbres = 10;
+const int maxArbres = 35;
+int nbArbres = 15;
 float tabArbres[maxArbres*3];
 float arbresH = 6.;
 
@@ -23,10 +23,12 @@ IMG imgdata;
 float yaw = 0.;
 float tilt = 0.;
 bool ajust = false;
+const float sunAngleStep = 0.05;
 camera *cam;
 
 glm::vec2 minp;
 glm::vec2 maxp;
+glm::vec4 sunDir = {0.,0.,1.,0.};
 HeightMap map;
 
 void display(){
@@ -49,22 +51,21 @@ void display(){
 
     glPushMatrix();
 
-        glm::mat4 vue = cam->vue();
-        glLoadMatrixf(glm::value_ptr(vue));
+        glLoadMatrixf(glm::value_ptr(cam->rotation()));
         float light_pos[] = { 0.0f, 100.0f, 10.0f };
         glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+        glLightfv(GL_LIGHT1, GL_POSITION, glm::value_ptr(sunDir));
 
-        qt.build(minp, maxp, proj * vue);
+        qt.build(minp, maxp, proj * cam->vue(),cam->getPos());
 
         glEnable(GL_DEPTH_TEST);
-        glDisable(GL_LIGHT0);
         glDisable(GL_LIGHTING);
         glDepthMask(GL_FALSE);
         drawSkyBox(texture);
         glDrawRepere(2.0);
         glDepthMask(GL_TRUE);
         glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
+        glLoadMatrixf(glm::value_ptr(cam->vue()));
         qt.render(minp, maxp, &map, sol);
         for (int i = 0; i < nbArbres*3; i+=3)
         {
@@ -97,6 +98,14 @@ static void kbdFunc(unsigned char c, int x, int y) {
 			break;
     case 'H' : case 'h' : 
       ajust = !ajust;
+			break;
+    case 'J' : case 'j' : 
+    { glm::mat4 rot = glm::rotate(sunAngleStep,glm::vec3(0.,1.,0.));
+      sunDir = rot*sunDir; }
+			break;
+    case 'K' : case 'k' : 
+    { glm::mat4 rot = glm::rotate(-sunAngleStep,glm::vec3(0.,1.,0.));
+      sunDir = rot*sunDir; }
 			break;
     case '1':
       if (nbArbres+1<maxArbres) nbArbres++;
@@ -138,8 +147,8 @@ void init(){
 
   for (int i = 0; i < maxArbres*3; i+=3)
   {
-    float posXarb = std::rand()%((int)info.xSize/2)+0;
-    float posYarb = std::rand()%((int)info.ySize/2)+0;
+    float posXarb = std::rand()%((int)info.xSize)-info.xSize/2;
+    float posYarb = std::rand()%((int)info.ySize)-info.ySize/2;
     float posZarb = map.get_height({posXarb,posYarb});
     tabArbres[i] = posXarb;
     tabArbres[i+1] = posYarb;
@@ -153,13 +162,17 @@ void init(){
 
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHT1);
 
-  float light_color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-  float light_ambient[] = { 0.0f, 0.0f, 1.0f };
-  float light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  float light_color[] = { 0.5f, 0.5f, 0.5f, 1.f };
+  float light_ambient[] = { 0.0f, 0.0f, 0.1f, 1.f };
+  float light_specular[] = { 0.5f, 0.5f, 0.5f, 1.f };
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
   glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
   glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+  glLightfv(GL_LIGHT1, GL_DIFFUSE, light_color);
+  glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
 }
 
 int main(int argc, char** argv)

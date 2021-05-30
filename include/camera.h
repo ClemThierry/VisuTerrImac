@@ -23,10 +23,12 @@ class camera {
     camera(float fov, float near, float far, float width, float height);            //constructeur
     void avancer(float distance);
     glm::mat4 projection();                                                         // matrice de projection
-    glm::mat4 vue();                                                                // matrice de vue (lookAt en general)
+    glm::mat4 vue();
+    glm::mat4 rotation();                                                                // matrice de vue (lookAt en general)
     void setdimension(float sw, float sh);
     void setangle(float angle, float angle2);
     void setHeight(HeightMap h);
+    glm::vec3 getPos();
 };
 
 #endif
