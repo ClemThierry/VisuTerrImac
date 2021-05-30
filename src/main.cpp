@@ -34,16 +34,23 @@ void display(){
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glMatrixMode(GL_PROJECTION);
+    glm::mat4 proj = cam->projection();
+    glLoadMatrixf(glm::value_ptr(proj));
+
     glMatrixMode(GL_MODELVIEW);
     
     glLoadIdentity();
 
     glPushMatrix();
 
-        glm::mat4 perspective = cam->calculermatrice();
-        glLoadMatrixf(glm::value_ptr(perspective));
+        glm::mat4 vue = cam->vue();
+        glLoadMatrixf(glm::value_ptr(vue));
 
-        qt.build(minp, maxp, perspective);
+        float light_pos[] = { 0.0f, 100.0f, 10.0f };
+        glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
+        qt.build(minp, maxp, proj * vue);
 
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_LIGHT0);
@@ -130,12 +137,12 @@ void init(){
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
-  float light_color[] = { 253.0f/255, 184.0/255, 19.0f/255, 1.0f };
-  float light_pos[] = { 0.0f, 0.0f, 10.0f };
-  glLightfv(GL_LIGHT0, GL_AMBIENT, light_color);
+  float light_color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  float light_ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  float light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 }
 
 int main(int argc, char** argv)

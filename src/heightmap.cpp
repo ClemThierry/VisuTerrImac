@@ -22,11 +22,11 @@ float HeightMap::get_height(glm::vec2 pos) {
 
   float p00 = get_pixel(x, y);
   float p10 = get_pixel(x+1, y);
-  float h0 = p00 + fx * (p10 - p00);
+  float h0 = p00 + fx * (p10 - p00);            //interpolation linéaire sur x
 
   float p01 = get_pixel(x, y+1);
   float p11 = get_pixel(x+1, y+1);
-  float h1 = p01 + fx * (p11 - p01);
+  float h1 = p01 + fx * (p11 - p01);            //deuxième interpolation linéaire sur x
   
-  return h0 + fy * (h1 - h0);
+  return h0 + fy * (h1 - h0);                   //interpolation linéaire sur y
 }

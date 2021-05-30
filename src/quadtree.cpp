@@ -1,7 +1,6 @@
 #include "../include/quadtree.h"
 #include <cmath>
 #include "../include/heightmap.h"
-#include <iostream>
 
 void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map, GLuint texture_id)
 {
@@ -21,6 +20,11 @@ void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map, GLui
             glm::vec3(topleft,map->get_height(topleft)),
         };
 
+        const glm::vec3 n[2] {
+          glm::normalize(glm::cross(tab[1]-tab[0], tab[2]-tab[0])),
+          glm::normalize(glm::cross(tab[4]-tab[3], tab[5]-tab[3]))
+        };
+
         const glm::vec2 tabCoord[6] = {
             glm::vec2(0.,1.),
             glm::vec2(1.,1.),
@@ -30,11 +34,16 @@ void Quad::render(glm::vec2 topleft, glm::vec2 bottomright, HeightMap *map, GLui
             glm::vec2(0.,1.),
         };
 
-        glColor3f(1.,1.,1.);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture_id);
+        const float material[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material);
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 50.0f);
         glBegin(GL_TRIANGLES);
         for(int i=0 ; i<6 ; i++){
+            int ni = i / 3;
+            glNormal3f(n[ni].x, n[ni].y, n[ni].z);
             glTexCoord2f(tabCoord[i].x,tabCoord[i].y);
             glVertex3f(tab[i].x, tab[i].y, tab[i].z);
         }

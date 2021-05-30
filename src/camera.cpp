@@ -16,10 +16,13 @@ void camera::avancer(float distance){
     this->pos += distance*this->orientation;
 }
 
-glm::mat4 camera::calculermatrice(){
-    //projection en perspective
+glm::mat4 camera::projection() {
     float aspect = this->width/this->height;
-    return glm::perspective(this->fov, aspect, this->near, this->far)*glm::lookAt(pos, pos+orientation, glm::vec3(0.0f,0.0f,1.0f));
+    return glm::perspective(this->fov, aspect, this->near, this->far);
+}
+
+glm::mat4 camera::vue() {
+    return glm::lookAt(pos, pos+orientation, glm::vec3(0.0f,0.0f,1.0f));
 }
 
 void camera::setdimension(float sw, float sh){

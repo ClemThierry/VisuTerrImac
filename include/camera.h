@@ -20,9 +20,10 @@ class camera {
 
     public:
 
-    camera(float fov, float near, float far, float width, float height);                    //constructeur
+    camera(float fov, float near, float far, float width, float height);            //constructeur
     void avancer(float distance);
-    glm::mat4 calculermatrice();                                                            //projection en perspective
+    glm::mat4 projection();                                                         // matrice de projection
+    glm::mat4 vue();                                                                // matrice de vue (lookAt en general)
     void setdimension(float sw, float sh);
     void setangle(float angle, float angle2);
     void setHeight(HeightMap h);
