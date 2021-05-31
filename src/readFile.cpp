@@ -21,14 +21,12 @@ infoTimac readTimac(){
     infile >> newTimac.zNear;
     infile >> newTimac.zFar;
     infile >> newTimac.fov;
-    printf("\n %s \n",newTimac.filename.c_str());
     return newTimac;
 }
 
 IMG readMap(std::string filename){
     IMG newImage;
     std::ifstream infile(filename);
-    printf("\n %s \n",strerror(errno));
     if(!infile.is_open()){
         printf("\n Erreur Reading PBM");
     }

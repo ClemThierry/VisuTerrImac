@@ -84,33 +84,33 @@ static void kbdFunc(unsigned char c, int x, int y) {
 		case 27 :
 			exit(0);
 			break;
-		case 'Z' : case 'z' : 
+		case 'Z' : case 'z' : //Regarder vers le haut
 			if(tilt < M_PI/2)tilt+= STEP_ANGLE;
 			break;
-		case 'S' : case 's' : 
+		case 'S' : case 's' : //Regarder vers le bas
 			if(tilt > -M_PI/2) tilt-= STEP_ANGLE;
 			break;
-		case 'F' : case 'f' : 
+		case 'F' : case 'f' : //Mode filaire
 			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 			break;
-		case 'P' : case 'p' : 
+		case 'P' : case 'p' : //Mode plein
 			glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 			break;
-    case 'H' : case 'h' : 
+    case 'H' : case 'h' : //Caméra à hauteur fixe
       ajust = !ajust;
 			break;
-    case 'J' : case 'j' : 
+    case 'J' : case 'j' : //Rotation Soleil
     { glm::mat4 rot = glm::rotate(sunAngleStep,glm::vec3(0.,1.,0.));
       sunDir = rot*sunDir; }
 			break;
-    case 'K' : case 'k' : 
+    case 'K' : case 'k' : //Rotation Soleil
     { glm::mat4 rot = glm::rotate(-sunAngleStep,glm::vec3(0.,1.,0.));
       sunDir = rot*sunDir; }
 			break;
-    case '1':
+    case '1': //Ajouter un arbre
       if (nbArbres+1<maxArbres) nbArbres++;
       break;
-    case '2':
+    case '2': //Enlever un arbre
       if (nbArbres>0) nbArbres--;
       break;
 		default:
@@ -128,10 +128,10 @@ static void kbdSpFunc(int c, int x, int y) {
 		case GLUT_KEY_DOWN :
       cam->avancer(-0.1);
 			break;
-		case GLUT_KEY_LEFT :
+		case GLUT_KEY_LEFT : //Regarder vers la droite
 			yaw+=0.1;
 			break;
-		case GLUT_KEY_RIGHT :
+		case GLUT_KEY_RIGHT : //Regarder vers la gauche
 			yaw-=0.1;
 			break;
 		default:

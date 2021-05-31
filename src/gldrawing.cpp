@@ -40,7 +40,7 @@ void drawObject(GLuint texture_id,float objH,float x, float y, float z, float ya
     glBindTexture(GL_TEXTURE_2D,texture_id);
 
 	glPushMatrix();
-		glTranslatef(x,y,z+objH-1);
+		glTranslatef(x,y,z+objH-2);
 		glRotatef(yaw/M_PI*180+90,0.,0.,1.);
 		glBegin(GL_QUADS);
             glTexCoord2f(0,1);

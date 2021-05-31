@@ -176,10 +176,8 @@ bool collision(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4]) {
 
 void Quad::build_rec(glm::vec2 topleft, glm::vec2 bottomright, glm::vec2 frustum[4], int level,glm::vec3 camPos){
     float distance = glm::distance(topleft,{camPos.x,camPos.y});
-    //printf("Distance : %f \n",distance);
     int maxLevel = 8 - distance*6/150.0;
     if(level > maxLevel || !collision(topleft, bottomright, frustum) ){            //condition d'arret : on a atteint la profondeur/subdivision maximale ou pas de collision
-      //std::cout << "stop at " << level << "\n";
         return;
     }
     else{                      //on crée des enfants
